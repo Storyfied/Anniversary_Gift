@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using Newtonsoft.Json;
-using System.Linq;
 
 public static class ParseUtils
 {
@@ -163,7 +162,7 @@ public static class ParseUtils
     {
         if (dict.ContainsKey(key))
         {
-            return ((object[])dict[key]).ToList();
+            return (List<object>)dict[key];
         }
 
         else
