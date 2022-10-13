@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using Newtonsoft.Json;
+using System.Linq;
 
 public static class ParseUtils
 {
@@ -98,7 +99,7 @@ public static class ParseUtils
             List<string> stringList = new List<string>(objList.Count);
             foreach (object obj in objList)
             {
-                stringList.Add((string)obj);
+                stringList.Add(obj.ToString());
             }
 
             return stringList;
@@ -123,7 +124,9 @@ public static class ParseUtils
             foreach (object obj in objList)
             {
                 T newObj = new T();
-                Dictionary<string, object> objDict = (Dictionary<string, object>)obj;
+                //Dictionary<string, object> objDict = (Dictionary<string, object>)obj;
+                string json = JsonConvert.SerializeObject(obj);
+                Dictionary<string, object> objDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
                 newObj.Init(objDict);
                 resultList.Add(newObj);
             }
@@ -162,7 +165,7 @@ public static class ParseUtils
     {
         if (dict.ContainsKey(key))
         {
-            return (List<object>)dict[key];
+            return (dict[key] as IEnumerable<object>).Cast<object>().ToList();
         }
 
         else

@@ -15,8 +15,6 @@ public class TriviaManager : MonoSingleton<TriviaManager>
         Dictionary<string, object> dict = ParseUtils.GetParseData(TRIVIA_JSON_PATH).dict;
         Character newCharacter = new Character(dict);
 
-        Debug.LogFormat("{0} has {1} trivias!", newCharacter.Name, newCharacter.Trivias.Count);
-
         return null;
     }
 }
