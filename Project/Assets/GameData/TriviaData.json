@@ -1,16 +1,37 @@
 {
     "dict": {
-        "name": "Wei Xin",
-        "trivias": [
+        "characters":[
             {
-                "question": "What is my favourite color?",
-                "answers": [ "Blue", "Red", "Green", "Yellow" ],
-                "correctAnswer": 1
+                "name": "Jiayi",
+                "trivias": [
+                    {
+                        "question": "What is my favourite color?",
+                        "answers": [ "Turquoise", "Magenta", "Salmon", "Yellow" ],
+                        "correctAnswer": 1
+                    },
+                    {
+                        "question": "What is my favourite animal?",
+                        "answers": [ "Bear", "Duck", "Ballsack-cat", "Dog" ],
+                        "correctAnswer": 3
+                    }
+                ],
+                "currentProgress": 2
             },
             {
-                "question": "What is my favourite animal?",
-                "answers": [ "Racoon", "Bird", "Cat", "Dog" ],
-                "correctAnswer": 3
+                "name": "Weixin",
+                "trivias": [
+                    {
+                        "question": "What is my favourite color?",
+                        "answers": [ "Blue", "Red", "Green", "Yellow" ],
+                        "correctAnswer": 1
+                    },
+                    {
+                        "question": "What is my favourite animal?",
+                        "answers": [ "Racoon", "Bird", "Cat", "Dog" ],
+                        "correctAnswer": 3
+                    }
+                ],
+                "currentProgress": 0
             }
         ]
     }
