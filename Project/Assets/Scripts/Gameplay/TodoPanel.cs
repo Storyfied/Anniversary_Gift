@@ -10,8 +10,9 @@ public class TodoPanel : MonoBehaviour
     [Header("Internal References")]
     [SerializeField] private Button m_closeButton = null;
     [SerializeField] private TextMeshProUGUI m_title = null;
-    [SerializeField] private Transform m_content = null;
+    [SerializeField] private RectTransform m_content = null;
     [SerializeField] private RectTransform m_pagesContent = null;
+    [SerializeField] private RectTransform m_pagesScrollView = null;
     [SerializeField] private GameObject m_inputBlocker = null;
 
     [Header("Main Page References")]
@@ -26,6 +27,8 @@ public class TodoPanel : MonoBehaviour
     private Image m_darkOverlay = null;
     private List<QuestProgressionField> m_questFields = new List<QuestProgressionField>();
     private string[] m_titleStrings = { "To-Do List O", "{0}'s Trivia O" };
+    private float[] m_pageViewHeights = { 892f, 742f };
+    private float[] m_pageHeights = { 1100f, 950f };
 
     private void Awake()
     {
@@ -119,5 +122,13 @@ public class TodoPanel : MonoBehaviour
                 m_pagesContent.localPosition = new Vector3(contentPos, 0f, 0f);
             })
             .OnComplete(() => m_inputBlocker.SetActive(false));
+
+        // Tween page view height
+        float targetViewHeight = m_pageViewHeights[(int)_page];
+        m_pagesScrollView.DOSizeDelta(new Vector2(m_pagesScrollView.sizeDelta.x, targetViewHeight), .2f);
+
+        // Tween page height
+        float targetPageHeight = m_pageHeights[(int)_page];
+        m_content.DOSizeDelta(new Vector2(m_content.sizeDelta.x, targetPageHeight), .2f);
     }
 }
