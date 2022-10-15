@@ -10,7 +10,7 @@ public class QuestProgressionField : MonoBehaviour
 
     public void Setup(Character _character)
     {
-        m_questDescText.text = string.Format("Complete {0}'s trivia", _character.Name);
+        m_questDescText.text = string.Format("<size=50>Complete {0}'s trivia <size=30>( Click me! )</size>", _character.Name);
         UpdateProgress(_character);
     }
 

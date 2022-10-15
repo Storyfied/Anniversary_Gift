@@ -9,6 +9,7 @@ public class TodoPanel : MonoBehaviour
 {
     [Header("Internal References")]
     [SerializeField] private Button m_closeButton = null;
+    [SerializeField] private TextMeshProUGUI m_title = null;
     [SerializeField] private Transform m_content = null;
     [SerializeField] private Transform m_questFieldsHolder = null;
 

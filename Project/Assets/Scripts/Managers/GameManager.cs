@@ -19,8 +19,6 @@ public class GameManager : MonoSingleton<GameManager>
     {
         Character character = GetCharacter(_name);
         character.UpdateCurrentProgress();
-
-        // TODO : Serialize Character into json file
     }
 
     public List<Character> GetCharacterList()
@@ -31,6 +29,6 @@ public class GameManager : MonoSingleton<GameManager>
     public Character GetCharacter(string _name)
     {
         // using First() instead of Find() because I want the system to throw an exception incase something goes wrong
-        return m_characters.First(x => x.Name == _name);
+        return m_characters.First(x => x.Name.ToLower() == _name.ToLower());
     }
 }
