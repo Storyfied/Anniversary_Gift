@@ -11,17 +11,28 @@ public class TodoPanel : MonoBehaviour
     [SerializeField] private Button m_closeButton = null;
     [SerializeField] private TextMeshProUGUI m_title = null;
     [SerializeField] private Transform m_content = null;
+    [SerializeField] private RectTransform m_pagesContent = null;
+    [SerializeField] private GameObject m_inputBlocker = null;
+
+    [Header("Main Page References")]
     [SerializeField] private Transform m_questFieldsHolder = null;
+
+    [Header("Trivia Page References")]
+    [SerializeField] private Button m_triviaBackButton = null;
 
     [Header("Prefab References")]
     [SerializeField] private QuestProgressionField m_questFieldPrefab = null;
 
     private Image m_darkOverlay = null;
     private List<QuestProgressionField> m_questFields = new List<QuestProgressionField>();
+    private string[] m_titleStrings = { "To-Do List O", "{0}'s Trivia O" };
 
     private void Awake()
     {
         m_darkOverlay = GetComponent<Image>();
+
+        // Disable input blocker by default
+        m_inputBlocker.SetActive(false);
 
         // Spawn and cache QuestProgressionFields depending on amount of characters
         // TODO : Use object pooling to spawn these prefabs
@@ -31,9 +42,11 @@ public class TodoPanel : MonoBehaviour
             Character character = characterList[i];
             QuestProgressionField newQuestField = Instantiate(m_questFieldPrefab, m_questFieldsHolder);
 
-            newQuestField.Setup(character);
+            newQuestField.Setup(character, () => ChangePage(PAGE_TYPE.TRIVIA, character));
             m_questFields.Add(newQuestField);
         }
+
+        m_triviaBackButton.onClick.AddListener(() => ChangePage(PAGE_TYPE.MAIN));
     }
 
     private void OnEnable()
@@ -78,5 +91,33 @@ public class TodoPanel : MonoBehaviour
         {
             m_questFields[i].UpdateProgress(GameManager.Instance.GetCharacterList()[i]);
         }
+    }
+
+    private void ChangePage(PAGE_TYPE _page, Character _character = null)
+    {
+        m_inputBlocker.SetActive(true);
+        string GetTitleString()
+        {
+            switch(_page)
+            {
+                case PAGE_TYPE.MAIN:
+                    return m_titleStrings[(int)_page];
+
+                case PAGE_TYPE.TRIVIA:
+                    return string.Format(m_titleStrings[(int)_page], _character.Name);
+            }
+
+            return null;
+        }
+        m_title.text = GetTitleString();
+
+        // Scroll to target page
+        float targetPos = m_pagesContent.GetChild((int)_page).transform.localPosition.x;
+        float contentPos = m_pagesContent.transform.localPosition.x;
+        DOTween.To(() => contentPos, x => contentPos = x, -targetPos, .3f)
+            .OnUpdate(() => {
+                m_pagesContent.localPosition = new Vector3(contentPos, 0f, 0f);
+            })
+            .OnComplete(() => m_inputBlocker.SetActive(false));
     }
 }
