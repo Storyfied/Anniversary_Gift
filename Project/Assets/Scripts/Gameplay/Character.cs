@@ -28,4 +28,9 @@ public class Character : IResultList
             PlayerPrefs.SetInt(string.Format(m_currentProgressKey, Name), CurrentProgress);
         }
     }
+
+    public Trivia GetCurrentTrivia()
+    {
+        return Trivias[CurrentProgress];
+    }
 }

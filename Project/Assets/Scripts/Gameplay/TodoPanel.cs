@@ -19,6 +19,7 @@ public class TodoPanel : MonoBehaviour
     [SerializeField] private Transform m_questFieldsHolder = null;
 
     [Header("Trivia Page References")]
+    [SerializeField] private TriviaPage m_triviaPage = null;
     [SerializeField] private Button m_triviaBackButton = null;
 
     [Header("Prefab References")]
@@ -99,20 +100,20 @@ public class TodoPanel : MonoBehaviour
     private void ChangePage(PAGE_TYPE _page, Character _character = null)
     {
         m_inputBlocker.SetActive(true);
-        string GetTitleString()
+
+        // Setup page
+        switch(_page)
         {
-            switch(_page)
-            {
-                case PAGE_TYPE.MAIN:
-                    return m_titleStrings[(int)_page];
+            case PAGE_TYPE.MAIN:
+                m_title.text = m_titleStrings[(int)_page];
+                m_triviaPage.CleanUp();
+                break;
 
-                case PAGE_TYPE.TRIVIA:
-                    return string.Format(m_titleStrings[(int)_page], _character.Name);
-            }
-
-            return null;
+            case PAGE_TYPE.TRIVIA:
+                m_title.text = string.Format(m_titleStrings[(int)_page], _character.Name);
+                m_triviaPage.Setup(_character.GetCurrentTrivia(), string.Format("{0}/{1}", _character.CurrentProgress + 1, _character.Trivias.Count));
+                break;
         }
-        m_title.text = GetTitleString();
 
         // Scroll to target page
         float targetPos = m_pagesContent.GetChild((int)_page).transform.localPosition.x;
