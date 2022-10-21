@@ -13,11 +13,14 @@ public class TriviaAnswer : MonoBehaviour
 
     public int AnswerIndex { get; private set; }
 
-    public void Setup(string _answerString, int _index)
+    public void Setup(string _answerString, int _index, UnityEngine.Events.UnityAction<int> _callBack)
     {
         m_text.text = string.Format("{0}. {1}", alphabetList[_index], _answerString);
-        //m_button.onClick.AddListener();
-
         AnswerIndex = _index;
+
+        m_button.onClick.AddListener(() =>
+        {
+            _callBack(AnswerIndex);
+        });
     }
 }

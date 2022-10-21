@@ -30,6 +30,7 @@ public class TodoPanel : MonoBehaviour
     private string[] m_titleStrings = { "To-Do List O", "{0}'s Trivia O" };
     private float[] m_pageViewHeights = { 892f, 742f };
     private float[] m_pageHeights = { 1100f, 950f };
+    private bool m_newTriviaLoaded = false;
 
     private void Awake()
     {
@@ -50,18 +51,27 @@ public class TodoPanel : MonoBehaviour
             m_questFields.Add(newQuestField);
         }
 
+        m_closeButton.onClick.AddListener(() => Close());
         m_triviaBackButton.onClick.AddListener(() => ChangePage(PAGE_TYPE.MAIN));
+
+        m_triviaPage.OnLoadNewTriviaHandler += () =>
+        {
+            IEnumerator SetInputBlocker()
+            {
+                m_inputBlocker.SetActive(true);
+                yield return new WaitUntil(() => m_newTriviaLoaded);
+                m_newTriviaLoaded = false;
+                m_inputBlocker.SetActive(false);
+            }
+            StartCoroutine(SetInputBlocker());
+        };
+        m_triviaPage.OnLoadedNewTriviaHandler += () => m_newTriviaLoaded = true;
+        m_triviaPage.OnCharacterTriviaCompletedHandler += () => ChangePage(PAGE_TYPE.MAIN);
     }
 
     private void OnEnable()
     {
-        m_closeButton.onClick.AddListener(() => Close());
         Setup();
-    }
-
-    private void OnDisable()
-    {
-        m_closeButton.onClick.RemoveListener(() => Close());
     }
 
     private void Close()
@@ -106,12 +116,13 @@ public class TodoPanel : MonoBehaviour
         {
             case PAGE_TYPE.MAIN:
                 m_title.text = m_titleStrings[(int)_page];
+                Setup();
                 m_triviaPage.CleanUp();
                 break;
 
             case PAGE_TYPE.TRIVIA:
                 m_title.text = string.Format(m_titleStrings[(int)_page], _character.Name);
-                m_triviaPage.Setup(_character.GetCurrentTrivia(), string.Format("{0}/{1}", _character.CurrentProgress + 1, _character.Trivias.Count));
+                m_triviaPage.Setup(_character);
                 break;
         }
 
