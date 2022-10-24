@@ -1,0 +1,71 @@
+{
+    "dict": {
+        "characters":[
+            {
+                "name": "Jiayi",
+                "trivias": [
+                    {
+                        "question": "Which non-wholesome nickname do I use the most when referring to you?",
+                        "answers": [ "Billy", "Baberts", "Sexy Nugget", "Mommy" ],
+                        "correctAnswer": 1
+                    },
+                    {
+                        "question": "What did I wear on our first date?",
+                        "answers": [ "Black hoodie & denim jacket", "T shirt & denim jacket", "Black Turtle-neck", "Black Turtle-neck & denim jacket" ],
+                        "correctAnswer": 3
+                    },
+                    {
+                        "question": "What did I offer you when you came over to my house?",
+                        "answers": [ "An apple", "A banana", "A good time ;)", "Crackers" ],
+                        "correctAnswer": 0
+                    },
+                    {
+                        "question": "What did we have for dinner when we stayed in KL?",
+                        "answers": [ "Fried Rice", "Noodles", "Seafood", "Korean" ],
+                        "correctAnswer": 2
+                    },
+                    {
+                        "question": "Which holiday destination had I NOT mention before?",
+                        "answers": [ "Bali", "Maldives", "South Korea", "Italy" ],
+                        "correctAnswer": 2
+                    }
+                ]
+            },
+            {
+                "name": "Weixin",
+                "trivias": [
+                    {
+                        "question": "Which animal would I execute without any second thoughts?",
+                        "answers": [ "Any insect", "Ball-sack cat", "Box Jellyfish", "Stonefish" ],
+                        "correctAnswer": 1
+                    },
+                    {
+                        "question": "What was the first crypto I've ever bought?",
+                        "answers": [ "BTC", "PNT", "MATIC", "ADA" ],
+                        "correctAnswer": 0
+                    },
+                    {
+                        "question": "If I were to become an animal, what would it be?",
+                        "answers": [ "Dog", "Orca", "Turtle", "Worm" ],
+                        "correctAnswer": 2
+                    },
+                    {
+                        "question": "What is my desired nickname?",
+                        "answers": [ "Sir Alexander", "Sir Gilgois the III", "Omega male", "Yours :>" ],
+                        "correctAnswer": 1
+                    },
+                    {
+                        "question": "Okay, that's enough triggering for today. I love you Jiayi and I'll support you no matter where you are in life :>",
+                        "answers": [ "(this is where you get teary eyed and show me boobies)" ],
+                        "correctAnswer": 0
+                    }
+                ]
+            }
+        ],
+        "bunnyMessages":[
+            "Hi there, a handsome lad left a message for you!",
+            "Oh, the message? Give me some candies and maybe I'll let you know!",
+            "Complete some trivias to earn some yummies for me :P"
+        ]
+    }
+}

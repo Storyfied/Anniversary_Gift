@@ -11,7 +11,7 @@ public static class ParseUtils
     /// <summary>
     /// Parses a json file and returns a Dictionary with a KEY type of STRING and an VALUE type of OBJECT.
     /// </summary>
-    public static ParseData GetParseData(string _jsonPath)
+    /*public static ParseData GetParseData(string _jsonPath)
     {
         StreamReader stream = new StreamReader(_jsonPath);
         if (stream != null)
@@ -20,6 +20,17 @@ public static class ParseUtils
         }
 
         Debug.LogErrorFormat("Unable to read json at path -> {0}", _jsonPath);
+        return null;
+    }*/
+
+    public static ParseData GetParseData(string _jsonString)
+    {
+        if (!string.IsNullOrEmpty(_jsonString))
+        {
+            return JsonConvert.DeserializeObject<ParseData>(_jsonString);
+        }
+
+        Debug.LogErrorFormat("Unable to read json!");
         return null;
     }
 

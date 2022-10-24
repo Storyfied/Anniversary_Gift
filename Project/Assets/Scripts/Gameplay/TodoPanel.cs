@@ -13,10 +13,12 @@ public class TodoPanel : MonoBehaviour
     [SerializeField] private RectTransform m_content = null;
     [SerializeField] private RectTransform m_pagesContent = null;
     [SerializeField] private RectTransform m_pagesScrollView = null;
-    [SerializeField] private GameObject m_inputBlocker = null;
+    [SerializeField] private InputBlocker m_inputBlocker = null;
 
     [Header("Main Page References")]
     [SerializeField] private Transform m_questFieldsHolder = null;
+    [SerializeField] private Bunny m_bunny = null;
+    [SerializeField] private Image[] m_candyImages = null;
 
     [Header("Trivia Page References")]
     [SerializeField] private TriviaPage m_triviaPage = null;
@@ -26,18 +28,23 @@ public class TodoPanel : MonoBehaviour
     [SerializeField] private QuestProgressionField m_questFieldPrefab = null;
 
     private Image m_darkOverlay = null;
+    private Image m_inputBlockerImage = null;
     private List<QuestProgressionField> m_questFields = new List<QuestProgressionField>();
     private string[] m_titleStrings = { "To-Do List O", "{0}'s Trivia O" };
     private float[] m_pageViewHeights = { 892f, 742f };
     private float[] m_pageHeights = { 1100f, 950f };
     private bool m_newTriviaLoaded = false;
+    private bool m_bunnyMessageShown = false;
+    private Transform m_bunnyParent = null;
 
     private void Awake()
     {
         m_darkOverlay = GetComponent<Image>();
+        m_inputBlockerImage = m_inputBlocker.GetComponent<Image>();
+        m_bunnyParent = m_bunny.transform.parent;
 
         // Disable input blocker by default
-        m_inputBlocker.SetActive(false);
+        m_inputBlocker.gameObject.SetActive(false);
 
         // Spawn and cache QuestProgressionFields depending on amount of characters
         // TODO : Use object pooling to spawn these prefabs
@@ -58,10 +65,10 @@ public class TodoPanel : MonoBehaviour
         {
             IEnumerator SetInputBlocker()
             {
-                m_inputBlocker.SetActive(true);
+                m_inputBlocker.gameObject.SetActive(true);
                 yield return new WaitUntil(() => m_newTriviaLoaded);
                 m_newTriviaLoaded = false;
-                m_inputBlocker.SetActive(false);
+                m_inputBlocker.gameObject.SetActive(false);
             }
             StartCoroutine(SetInputBlocker());
         };
@@ -84,7 +91,7 @@ public class TodoPanel : MonoBehaviour
 
     public void Open()
     {
-        if(m_darkOverlay == null)
+        if (m_darkOverlay == null)
             m_darkOverlay = GetComponent<Image>();
 
         m_darkOverlay.color = new Color(m_darkOverlay.color.r, m_darkOverlay.color.g, m_darkOverlay.color.b, 0f);
@@ -96,6 +103,47 @@ public class TodoPanel : MonoBehaviour
 
         openSequence.Append(m_darkOverlay.DOFade(.5f, .3f));
         openSequence.Join(m_content.DOScale(1f, .3f).SetEase(Ease.OutBack));
+
+        if (!GameManager.Instance.HasProgression() && !m_bunnyMessageShown)
+        {
+            m_bunnyMessageShown = true;
+
+            StartCoroutine(PlayTutorial());
+            IEnumerator PlayTutorial()
+            {
+                m_bunny.transform.SetParent(transform);
+                m_bunny.DisableIdleText();
+                m_inputBlocker.gameObject.SetActive(true);
+                m_inputBlockerImage.DOFade(.75f, .3f);
+
+                yield return new WaitForSeconds(.3f);
+
+                bool isClickDetected = false;
+                void OnInputDetected()
+                {
+                    isClickDetected = true;
+                }
+                m_inputBlocker.OnInputDetectedHandler += OnInputDetected;
+
+                List<string> bunnyMessages = GameManager.Instance.GetBunnyMessages();
+                for(int i = 0; i < bunnyMessages.Count; i++)
+                {
+                    isClickDetected = false;
+                    m_bunny.ShowTextBubble(bunnyMessages[i]);
+                    yield return new WaitUntil(() => isClickDetected);
+                }
+                m_bunny.HideTextBubble();
+
+                m_inputBlocker.OnInputDetectedHandler -= OnInputDetected;
+                m_inputBlockerImage.DOFade(0f, .3f)
+                    .OnComplete(() =>
+                    {
+                        m_bunny.transform.SetParent(m_bunnyParent);
+                        m_inputBlocker.gameObject.SetActive(false);
+                        m_bunny.EnableIdleText();
+                    });
+            }
+        }
     }
 
     public void Setup()
@@ -105,14 +153,28 @@ public class TodoPanel : MonoBehaviour
         {
             m_questFields[i].UpdateProgress(GameManager.Instance.GetCharacterList()[i]);
         }
+
+        // Enable candy images based on current progression
+        List<Character> characterList = GameManager.Instance.GetCharacterList();
+        int completedAmount = 0;
+        for (int i = 0; i < characterList.Count; i++)
+        {
+            Character character = characterList[i];
+            completedAmount += character.IsTriviasCompleted ? character.Trivias.Count : character.CurrentProgress;
+        }
+
+        for (int i = 0; i < m_candyImages.Length; i++)
+        {
+            m_candyImages[i].gameObject.SetActive(i < completedAmount);
+        }
     }
 
     private void ChangePage(PAGE_TYPE _page, Character _character = null)
     {
-        m_inputBlocker.SetActive(true);
+        m_inputBlocker.gameObject.SetActive(true);
 
         // Setup page
-        switch(_page)
+        switch (_page)
         {
             case PAGE_TYPE.MAIN:
                 m_title.text = m_titleStrings[(int)_page];
@@ -133,7 +195,7 @@ public class TodoPanel : MonoBehaviour
             .OnUpdate(() => {
                 m_pagesContent.localPosition = new Vector3(contentPos, 0f, 0f);
             })
-            .OnComplete(() => m_inputBlocker.SetActive(false));
+            .OnComplete(() => m_inputBlocker.gameObject.SetActive(false));
 
         // Tween page view height
         float targetViewHeight = m_pageViewHeights[(int)_page];

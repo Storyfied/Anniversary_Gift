@@ -6,19 +6,18 @@ using UnityEngine;
 public class GameManager : MonoSingleton<GameManager>
 {
     private List<Character> m_characters = null;
-    private const string TRIVIA_JSON_PATH = "Assets/GameData/TriviaData.json";
+    private List<string> m_bunnyMessages = null;
+    private const string TRIVIA_JSON_PATH = "GameData/TriviaData";
 
     private void Awake()
     {
         // Load character's data from json file
-        Dictionary<string, object> dict = ParseUtils.GetParseData(TRIVIA_JSON_PATH).dict;
-        m_characters = ParseUtils.GetTypedList<Character>(dict, "characters");
-    }
+        TextAsset jsonFile = Resources.Load(TRIVIA_JSON_PATH) as TextAsset;
+        string jsonString = jsonFile.ToString();
 
-    public void UpdateCharacterProgress(string _name)
-    {
-        Character character = GetCharacter(_name);
-        character.UpdateCurrentProgress();
+        Dictionary<string, object> dict = ParseUtils.GetParseData(jsonString).dict;
+        m_characters = ParseUtils.GetTypedList<Character>(dict, "characters");
+        m_bunnyMessages = ParseUtils.GetStringList(dict, "bunnyMessages");
     }
 
     public List<Character> GetCharacterList()
@@ -30,5 +29,15 @@ public class GameManager : MonoSingleton<GameManager>
     {
         // using First() instead of Find() because I want the system to throw an exception incase something goes wrong
         return m_characters.First(x => x.Name.ToLower() == _name.ToLower());
+    }
+
+    public bool HasProgression()
+    {
+        return m_characters.Any(x => x.CurrentProgress > 0);
+    }
+
+    public List<string> GetBunnyMessages()
+    {
+        return m_bunnyMessages;
     }
 }
