@@ -13,7 +13,7 @@ public class TextBubble : MonoBehaviour
         m_text.text = _message;
 
         // Play animation
-        m_transform.DOScale(1f, .3f).SetEase(Ease.OutBack);
+        m_transform.DOScale(1f, .4f).SetEase(Ease.OutBack);
     }
 
     public void HideBubble(System.Action _callback)

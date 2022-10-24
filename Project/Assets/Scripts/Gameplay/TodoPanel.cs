@@ -34,7 +34,6 @@ public class TodoPanel : MonoBehaviour
     private float[] m_pageViewHeights = { 892f, 742f };
     private float[] m_pageHeights = { 1100f, 950f };
     private bool m_newTriviaLoaded = false;
-    private bool m_bunnyMessageShown = false;
     private Transform m_bunnyParent = null;
 
     private void Awake()
@@ -104,25 +103,27 @@ public class TodoPanel : MonoBehaviour
         openSequence.Append(m_darkOverlay.DOFade(.5f, .3f));
         openSequence.Join(m_content.DOScale(1f, .3f).SetEase(Ease.OutBack));
 
-        if (!GameManager.Instance.HasProgression() && !m_bunnyMessageShown)
+        if (!GameManager.Instance.GetIsIntroCompleted())
         {
-            m_bunnyMessageShown = true;
-
             StartCoroutine(PlayTutorial());
             IEnumerator PlayTutorial()
             {
-                m_bunny.transform.SetParent(transform);
-                m_bunny.DisableIdleText();
                 m_inputBlocker.gameObject.SetActive(true);
                 m_inputBlockerImage.DOFade(.75f, .3f);
+                m_bunny.DisableIdleText();
 
                 yield return new WaitForSeconds(.3f);
+
+                m_bunny.transform.SetParent(transform.parent);
 
                 bool isClickDetected = false;
                 void OnInputDetected()
                 {
                     isClickDetected = true;
                 }
+
+                yield return new WaitForSeconds(.25f);
+
                 m_inputBlocker.OnInputDetectedHandler += OnInputDetected;
 
                 List<string> bunnyMessages = GameManager.Instance.GetBunnyMessages();
@@ -141,6 +142,8 @@ public class TodoPanel : MonoBehaviour
                         m_bunny.transform.SetParent(m_bunnyParent);
                         m_inputBlocker.gameObject.SetActive(false);
                         m_bunny.EnableIdleText();
+
+                        GameManager.Instance.SetIntroCompleted();
                     });
             }
         }
